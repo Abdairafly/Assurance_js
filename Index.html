@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Compagnie d'assurance automobile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    
+    h1 {
+      text-align: center;
+      padding: 20px 0;
+      margin: 0;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    #result {
+      text-align: center;
+      margin-top: 30px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    #result p {
+      margin: 0;
+    }
+    
+    #result.success {
+      background-color: #c3e6cb;
+      color: #155724;
+      border-color: #b1dfbb;
+    }
+    
+    #result.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-color: #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+  <h1>Compagnie d'assurance automobile</h1>
+  
+  <div class="container">
+    <form id="insuranceForm">
+      <div class="form-group">
+        <label for="age">Âge du conducteur :</label>
+        <input type="number" id="age" name="age" min="0" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="drivingExperience">Années de permis :</label>
+        <input type="number" id="drivingExperience" name="drivingExperience" min="0" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="accidents">Nombre d'accidents :</label>
+        <input type="number" id="accidents" name="accidents" min="0" required>
+      </div>
+      
+      <button type="submit">Vérifier</button>
+    </form>
+    
+    <div id="result"></div>
+  </div>
+  
+  <script>
+    var form = document.getElementById('insuranceForm');
+    var resultDiv = document.getElementById('result');
+    
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      var age = parseInt(document.getElementById('age').value);
+      var drivingExperience = parseInt(document.getElementById('drivingExperience').value);
+      var accidents = parseInt(document.getElementById('accidents').value);
+      
+      var tariffColor = '';
+      var message = '';
+      
+      if (accidents > 3) {
+        message = 'Désolé, nous ne pouvons pas vous assurer en raison du nombre d\'accidents.';
+        showError(message);
+        return;
+      }
+      
+      if (age < 25 && drivingExperience < 2) {
+        if (accidents === 0) {
+          tariffColor = 'rouge';
+          message = 'Vous êtes éligible au tarif rouge. Ce tarif est réservé aux conducteurs de moins de 25 ans et titulaires du permis depuis moins de deux ans, et qui n\'ont jamais été responsables d\'accident.';
+        } else {
+          message = 'Désolé, nous ne pouvons pas vous assurer en raison de votre historique d\'accidents.';
+          showError(message);
+          return;
+        }
+      } else if ((age < 25 && drivingExperience >= 2) || (age >= 25 && drivingExperience < 2)) {
+        if (accidents === 0) {
+          tariffColor = 'orange';
+          message = 'Vous êtes éligible au tarif orange. Ce tarif s\'applique aux conducteurs de moins de 25 ans et titulaires du permis depuis plus de deux ans, ou de plus de 25 ans mais titulaires du permis depuis moins de deux ans, et qui n\'ont jamais provoqué d\'accident.';
+        } else if (accidents === 1) {
+          tariffColor = 'rouge';
+          message = 'Vous êtes éligible au tarif rouge. Ce tarif s\'applique aux conducteurs de moins de 25 ans et titulaires du permis depuis plus de deux ans, ou de plus de 25 ans mais titulaires du permis depuis moins de deux ans, en cas d\'un accident.';
+        } else {
+          message = 'Désolé, nous ne pouvons pas vous assurer en raison de votre historique d\'accidents.';
+          showError(message);
+          return;
+        }
+      } else if (age >= 25 && drivingExperience >= 2) {
+        if (accidents === 0) {
+          tariffColor = 'vert';
+          message = 'Vous êtes éligible au tarif vert. Ce tarif est réservé aux conducteurs de plus de 25 ans titulaires du permis depuis plus de deux ans, qui ne sont à l\'origine d\'aucun accident.';
+        } else if (accidents === 1) {
+          tariffColor = 'orange';
+          message = 'Vous êtes éligible au tarif orange. Ce tarif s\'applique aux conducteurs de plus de 25 ans titulaires du permis depuis plus de deux ans, en cas d\'un accident.';
+        } else if (accidents === 2) {
+          tariffColor = 'rouge';
+          message = 'Vous êtes éligible au tarif rouge. Ce tarif s\'applique aux conducteurs de plus de 25 ans titulaires du permis depuis plus de deux ans, en cas de deux accidents.';
+        } else {
+          message = 'Désolé, nous ne pouvons pas vous assurer en raison de votre historique d\'accidents.';
+          showError(message);
+          return;
+        }
+      }
+      
+      showSuccess(message);
+    });
+    
+    function showSuccess(message) {
+      resultDiv.innerHTML = '<p>' + message + '</p>';
+      resultDiv.className = 'success';
+    }
+    
+    function showError(message) {
+      resultDiv.innerHTML = '<p>' + message + '</p>';
+      resultDiv.className = 'error';
+    }
+  </script>
+</body>
+</html>
